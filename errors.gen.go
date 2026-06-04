@@ -77,7 +77,18 @@ type err struct {
                         callers: getCallers(2),
                         inner: nil,
                         innerMost: nil,
-                    } 
+                    }
+                }
+
+                func Newf(format string, args ...any) error {
+                    return &err{
+                        Code: "Internal",
+                        Message: fmt.Sprintf(format, args...),
+                        Fields: nil,
+                        callers: getCallers(2),
+                        inner: nil,
+                        innerMost: nil,
+                    }
                 }
             
 
