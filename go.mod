@@ -1,3 +1,3 @@
 module github.com/meitner-se/go-errors
 
-go 1.25.6
+go 1.27.1
