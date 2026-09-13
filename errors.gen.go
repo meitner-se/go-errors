@@ -34,6 +34,8 @@ import (
             
                 Unauthorized string = "Unauthorized"
             
+                Conflict string = "Conflict"
+            
         
             
         
@@ -288,6 +290,32 @@ type err struct {
                     }
                 
             
+                
+                    func NewConflict(message errMessage, fields ...*errField) error { 
+                        return &err{
+                            Code: errCode(Conflict),
+                            Message: string(message),
+                            Fields: fields,
+                            callers: getCallers(2),
+                            inner: nil,
+                            innerMost: nil,
+                            ServiceError: nil,
+                        } 
+                    }
+
+                    func NewConflictWrapped(inner error, message errMessage, fields ...*errField) error { 
+                        return &err{
+                            Code: errCode(Conflict),
+                            Message: string(message),
+                            Fields: fields,
+                            callers: getCallers(2),
+                            inner: inner,
+                            innerMost: InnerMost(inner),
+                            ServiceError: nil,
+                        } 
+                    }
+                
+            
         
     
            
@@ -367,6 +395,14 @@ type err struct {
                         return false
                     }
                     return underlying.Code == errCode(Unauthorized)
+                }
+            
+                func IsConflict(x error) bool {
+                    underlying, ok := x.(*err)
+                    if !ok {
+                        return false
+                    }
+                    return underlying.Code == errCode(Conflict)
                 }
             
         
