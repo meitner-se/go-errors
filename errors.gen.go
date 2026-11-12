@@ -36,6 +36,8 @@ import (
             
                 Conflict string = "Conflict"
             
+                RequestTooLarge string = "RequestTooLarge"
+            
         
             
         
@@ -316,6 +318,32 @@ type err struct {
                     }
                 
             
+                
+                    func NewRequestTooLarge(message errMessage, fields ...*errField) error { 
+                        return &err{
+                            Code: errCode(RequestTooLarge),
+                            Message: string(message),
+                            Fields: fields,
+                            callers: getCallers(2),
+                            inner: nil,
+                            innerMost: nil,
+                            ServiceError: nil,
+                        } 
+                    }
+
+                    func NewRequestTooLargeWrapped(inner error, message errMessage, fields ...*errField) error { 
+                        return &err{
+                            Code: errCode(RequestTooLarge),
+                            Message: string(message),
+                            Fields: fields,
+                            callers: getCallers(2),
+                            inner: inner,
+                            innerMost: InnerMost(inner),
+                            ServiceError: nil,
+                        } 
+                    }
+                
+            
         
     
            
@@ -403,6 +431,14 @@ type err struct {
                         return false
                     }
                     return underlying.Code == errCode(Conflict)
+                }
+            
+                func IsRequestTooLarge(x error) bool {
+                    underlying, ok := x.(*err)
+                    if !ok {
+                        return false
+                    }
+                    return underlying.Code == errCode(RequestTooLarge)
                 }
             
         
